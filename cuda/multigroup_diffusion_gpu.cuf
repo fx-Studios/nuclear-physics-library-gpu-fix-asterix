@@ -413,14 +413,16 @@ contains
     subroutine mg_gpu_compute_fission_source(g, nu_sigma_f)
         type(mg_gpu_state_t), intent(inout) :: g
         real(wp), intent(in) :: nu_sigma_f(g%nx, g%ny, g%nz, g%ng)
+        real(wp), allocatable, device :: nsf_d(:,:,:,:)
         type(dim3) :: grid, tblock
         integer :: istat
 
         tblock = dim3(8, 8, 4)
         grid = dim3((g%nx + 7) / 8, (g%ny + 7) / 8, (g%nz + 3) / 4)
 
+        nsf_d = nu_sigma_f
         call compute_fission_kernel<<<grid, tblock>>>( &
-            g%nx, g%ny, g%nz, g%ng, g%flux, nu_sigma_f, g%fission_src)
+            g%nx, g%ny, g%nz, g%ng, g%flux, nsf_d, g%fission_src)
         istat = cudaDeviceSynchronize()
         g%cuda_status = istat
     end subroutine mg_gpu_compute_fission_source

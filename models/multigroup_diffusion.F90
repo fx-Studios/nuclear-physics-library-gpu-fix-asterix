@@ -35,12 +35,14 @@ module multigroup_diffusion
 #ifdef COMPUTATION_MODE_GPU
     use multigroup_diffusion_gpu, only: mg_gpu_state_t, mg_gpu_init, mg_gpu_cleanup, &
         mg_gpu_copy_to_device, mg_gpu_copy_from_device, mg_gpu_source_iteration_step, &
-        mg_gpu_set_albedos, mg_gpu_fission_sum, mg_gpu_normalize_flux
+        mg_gpu_set_albedos, mg_gpu_fission_sum, mg_gpu_normalize_flux, &
+        mg_gpu_compute_fission_source
 #endif
 #ifdef COMPUTATION_MODE_HYBRID
     use multigroup_diffusion_gpu, only: mg_gpu_state_t, mg_gpu_init, mg_gpu_cleanup, &
         mg_gpu_copy_to_device, mg_gpu_copy_from_device, mg_gpu_source_iteration_step, &
-        mg_gpu_set_albedos, mg_gpu_fission_sum, mg_gpu_normalize_flux
+        mg_gpu_set_albedos, mg_gpu_fission_sum, mg_gpu_normalize_flux, &
+        mg_gpu_compute_fission_source
 #endif
     implicit none
     private

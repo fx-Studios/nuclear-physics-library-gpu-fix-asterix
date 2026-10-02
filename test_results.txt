@@ -1,0 +1,152 @@
+ ==================================================
+   NPL Example BWR Simulation Program
+   (text-mode; no OpenGL)
+ ==================================================
+ 
+ Setting up simulation...
+ Initialising physics modules...
+  Fuel volume fraction: 0.3197
+ Created HOMOGENIZED UO2 fuel cross-sections:
+  Enrichment:        3.5000
+%
+  σ_a(thermal):       2.1234E-01
+ cm^-1
+  σ_f(thermal):       1.5384E-01
+ cm^-1
+  ν*σ_f(thermal):     3.7229E-01
+ cm^-1
+  k-infinity est:     1.753
+ Created water moderator cross-sections:
+  σ_a(fast):          1.0000E-04
+ cm⁻¹
+  σ_a(thermal):       1.9600E-02
+ cm⁻¹
+  σ_s(1→2):           4.8000E-02
+ cm⁻¹
+  Fuel volume fraction: 0.3197
+ Created HOMOGENIZED UO2 fuel cross-sections:
+  Enrichment:        3.5000
+%
+  σ_a(thermal):       2.1234E-01
+ cm^-1
+  σ_f(thermal):       1.5384E-01
+ cm^-1
+  ν*σ_f(thermal):     3.7229E-01
+ cm^-1
+  k-infinity est:     1.753
+ Created water moderator cross-sections:
+  σ_a(fast):          1.0000E-04
+ cm⁻¹
+  σ_a(thermal):       1.9600E-02
+ cm⁻¹
+  σ_s(1→2):           4.8000E-02
+ cm⁻¹
+ BWR lattice parameters:
+  Pin pitch:          1.6300 cm
+  Pin radius:         0.5200 cm
+  Fuel-to-mod ratio:    0.47
+ Pin-by-pin geometry set up successfully
+   Grid:                     20 x           20 x           20
+   Core diameter:     4.750000000000000       m
+   Core height:       3.710000000000000       m
+   Rated power:       2381.000000000000       MW
+  Sat. temp at    7.1 MPa: 286.7 degC
+ 
+ Computing initial steady-state...
+ 
+ ========== Steady-State Results ==========
+ k_eff:                    1.366162225049419     
+ Reactivity:               26802.25073828063       pcm
+ Core power:               2381.000000000011       MW
+ Max fuel temp:            284.8500164247697       degC
+ Avg void fraction:        11.26957911288983       %
+ Max void fraction:        11.26960380248374       %
+ Min CHFR:                 195955777.6344236     
+ Sat. temperature:         286.6743646505704       degC
+ Reactor level (Lrx):     0.5719909189877770       m above core floor
+ APRM:                     100.0000000000005       %
+ Void reactivity (rf):    0.9942991414065012     
+ Turbine valve:            33.00000000000000       %
+ Turbine power:            267.1482000000012       MWe
+ Pressure:                 7.140000000000000       MPa
+ ==========================================
+ 
+ 
+ === COMMANDS (type at 'sim>' prompt) ===
+   <Enter>  - advance          100 steps
+   p        - pause / resume
+   1-5      - display focus (Power/Temp/Void/Burnup/T_sat)
+   +/-      - increase / decrease power setpoint 5 %
+   r/R      - insert +20 / -20 pcm reactivity
+   c/C      - increase / decrease coolant flow 5 %
+   i/I      - insert / withdraw control rods 0.5 %
+   t/T      - open / close turbine valve 2 %
+   b/B      - open / close bypass valve 2 %
+   s        - steady-state summary
+   h / ?    - this help
+   q / quit - quit
+ ========================================
+ 
+Step    100, t =     1.00 s
+  k_eff =    0.51020, rho = -96003.3 pcm
+  Power =    892.3 MW  APRM =  37.5 %
+  Max T_fuel =   284.9 degC
+  Avg void =  11.23 %  Min CHFR = *****
+  Level =   0.57 m  Pressure =  7.143 MPa
+  Turbine =     56.7 MWe  Period =   999.00 s
+  rf_void =   0.99
+ 
+sim> 
+Step    200, t =     2.00 s
+  k_eff =    0.51020, rho = -96003.3 pcm
+  Power =    895.3 MW  APRM =  37.6 %
+  Max T_fuel =   284.9 degC
+  Avg void =  11.31 %  Min CHFR = *****
+  Level =   0.57 m  Pressure =  7.137 MPa
+  Turbine =     78.6 MWe  Period =   999.00 s
+  rf_void =   0.99
+ 
+sim> 
+Step    300, t =     3.00 s
+  k_eff =    0.51020, rho = -96003.3 pcm
+  Power =    898.3 MW  APRM =  37.7 %
+  Max T_fuel =   284.9 degC
+  Avg void =  11.24 %  Min CHFR = *****
+  Level =   0.57 m  Pressure =  7.142 MPa
+  Turbine =     68.5 MWe  Period =   999.00 s
+  rf_void =   0.99
+ 
+sim> -
+ Power setpoint:   2261.9 MW
+Step    400, t =     4.00 s
+  k_eff =    0.51020, rho = -96003.3 pcm
+  Power =    901.4 MW  APRM =  39.8 %
+  Max T_fuel =   284.9 degC
+  Avg void =  11.29 %  Min CHFR = *****
+  Level =   0.58 m  Pressure =  7.139 MPa
+  Turbine =     73.5 MWe  Period =   999.00 s
+  rf_void =   0.99
+ 
+sim> -
+ Power setpoint:   2148.9 MW
+Step    500, t =     5.00 s
+  k_eff =    0.51020, rho = -96003.3 pcm
+  Power =    904.4 MW  APRM =  42.1 %
+  Max T_fuel =   284.9 degC
+  Avg void =  11.26 %  Min CHFR = *****
+  Level =   0.58 m  Pressure =  7.141 MPa
+  Turbine =     71.6 MWe  Period =   999.00 s
+  rf_void =   0.99
+ 
+sim> -
+ Power setpoint:   2041.4 MW
+Step    600, t =     6.00 s
+  k_eff =    0.51020, rho = -96003.3 pcm
+  Power =    907.4 MW  APRM =  44.5 %
+  Max T_fuel =   284.9 degC
+  Avg void =  11.28 %  Min CHFR = *****
+  Level =   0.58 m  Pressure =  7.139 MPa
+  Turbine =     72.7 MWe  Period =   999.00 s
+  rf_void =   0.99
+ 
+sim> 

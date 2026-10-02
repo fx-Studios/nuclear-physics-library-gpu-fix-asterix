@@ -306,17 +306,17 @@ contains
     end subroutine tp_gpu_cleanup
 
     !> Launch the per-cell update kernel.
-    subroutine tp_gpu_step(g, T, p, G, q_pp, D_h, heated_perim)
+    subroutine tp_gpu_step(g, T, p, G_in, q_pp, D_h, heated_perim)
         type(tp_gpu_state_t), intent(inout) :: g
         real(wp), intent(in) :: T(g%nx,g%ny,g%nz), p(g%nx,g%ny,g%nz)
-        real(wp), intent(in) :: G(g%nx,g%ny,g%nz), q_pp(g%nx,g%ny,g%nz)
+        real(wp), intent(in) :: G_in(g%nx,g%ny,g%nz), q_pp(g%nx,g%ny,g%nz)
         real(wp), intent(in) :: D_h(g%nx,g%ny,g%nz), heated_perim(g%nx,g%ny,g%nz)
         type(dim3) :: grid, tblock
         integer :: istat
 
         ! Copy inputs to managed memory
         g%temperature = T;  g%pressure = p
-        g%mass_flux = G;  g%heat_flux = q_pp
+        g%mass_flux = G_in;  g%heat_flux = q_pp
         g%diameter = D_h;  g%heated_perimeter = heated_perim
 
         tblock = dim3(8, 8, 4)

@@ -984,7 +984,7 @@ contains
         real(wp), intent(in) :: G(state%nx, state%ny, state%nz)
         real(wp), intent(in) :: q_pp(state%nx, state%ny, state%nz)
         real(wp), intent(in) :: dt
-        type(tp_gpu_state_t) :: g
+        type(tp_gpu_state_t) :: gs
         integer :: i, j, k
         integer :: boiling_int(state%nx, state%ny, state%nz)
 
@@ -995,11 +995,11 @@ contains
         state%heat_flux = q_pp
 
         ! Initialise and run GPU kernel
-        call tp_gpu_init(g, state%nx, state%ny, state%nz)
-        call tp_gpu_step(g, T, p, G, q_pp, state%diameter, state%heated_perimeter)
+        call tp_gpu_init(gs, state%nx, state%ny, state%nz)
+        call tp_gpu_step(gs, T, p, G, q_pp, state%diameter, state%heated_perimeter)
 
         ! Copy results back
-        call tp_gpu_copy_from_device(g, state%quality, state%void_fraction, &
+        call tp_gpu_copy_from_device(gs, state%quality, state%void_fraction, &
             state%slip_ratio, state%velocity_liquid, state%velocity_vapour, &
             state%chf_ratio, boiling_int)
 
@@ -1022,7 +1022,7 @@ contains
             end if
         end do; end do; end do
 
-        call tp_gpu_cleanup(g)
+        call tp_gpu_cleanup(gs)
     end subroutine two_phase_step_gpu
 #endif
 

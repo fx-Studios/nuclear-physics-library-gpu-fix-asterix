@@ -11,8 +11,6 @@ add_library(nuclear_physics_c SHARED
 # Set Fortran module output directory to match main project
 set_target_properties(nuclear_physics_c PROPERTIES
     Fortran_MODULE_DIRECTORY ${CMAKE_Fortran_MODULE_DIRECTORY}
-    VERSION ${PROJECT_VERSION}
-    SOVERSION 1
 )
 
 # Link against all required libraries.

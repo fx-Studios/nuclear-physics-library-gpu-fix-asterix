@@ -154,6 +154,7 @@ contains
         real(wp), intent(inout) :: y(:)
         real(wp), intent(in), optional :: alpha, beta
         real(wp) :: alpha_val, beta_val
+        real(wp), allocatable, device :: A_d(:,:), x_d(:), y_d(:)
         integer :: m, n, num_blocks, istat
         type(dim3) :: grid, tblock
 
@@ -166,8 +167,10 @@ contains
         tblock = dim3(MV_BLOCK, 1, 1)
         grid = dim3(num_blocks, 1, 1)
 
-        call dgemv_kernel<<<grid, tblock>>>(m, n, alpha_val, beta_val, A, x, y)
+        A_d = A;  x_d = x;  y_d = y
+        call dgemv_kernel<<<grid, tblock>>>(m, n, alpha_val, beta_val, A_d, x_d, y_d)
         istat = cudaDeviceSynchronize()
+        y = y_d
     end subroutine gpu_dgemv
 
     !> Matrix-matrix multiply: C = alpha*A*B + beta*C
@@ -176,6 +179,7 @@ contains
         real(wp), intent(inout) :: C(:,:)
         real(wp), intent(in), optional :: alpha, beta
         real(wp) :: alpha_val, beta_val
+        real(wp), allocatable, device :: A_d(:,:), B_d(:,:), C_d(:,:)
         integer :: m, n, k_dim, nbx, nby, istat
         type(dim3) :: grid, tblock
 
@@ -189,8 +193,10 @@ contains
         nby = (n + MM_BLOCK - 1) / MM_BLOCK
         grid = dim3(nbx, nby, 1)
 
-        call dgemm_kernel<<<grid, tblock>>>(m, n, k_dim, alpha_val, beta_val, A, B, C)
+        A_d = A;  B_d = B;  C_d = C
+        call dgemm_kernel<<<grid, tblock>>>(m, n, k_dim, alpha_val, beta_val, A_d, B_d, C_d)
         istat = cudaDeviceSynchronize()
+        C = C_d
     end subroutine gpu_dgemm
 
     !> AXPY: y = alpha*x + y
@@ -199,6 +205,7 @@ contains
         real(wp), intent(inout) :: y(:)
         real(wp), intent(in), optional :: alpha
         real(wp) :: alpha_val
+        real(wp), allocatable, device :: x_d(:), y_d(:)
         integer :: n, num_blocks, istat
         type(dim3) :: grid, tblock
 
@@ -209,14 +216,17 @@ contains
         tblock = dim3(MV_BLOCK, 1, 1)
         grid = dim3(num_blocks, 1, 1)
 
-        call daxpy_kernel<<<grid, tblock>>>(n, alpha_val, x, y)
+        x_d = x;  y_d = y
+        call daxpy_kernel<<<grid, tblock>>>(n, alpha_val, x_d, y_d)
         istat = cudaDeviceSynchronize()
+        y = y_d
     end subroutine gpu_daxpy
 
     !> Vector scale: x = alpha*x
     subroutine gpu_dscal(x, alpha)
         real(wp), intent(inout) :: x(:)
         real(wp), intent(in) :: alpha
+        real(wp), allocatable, device :: x_d(:)
         integer :: n, num_blocks, istat
         type(dim3) :: grid, tblock
 
@@ -225,8 +235,10 @@ contains
         tblock = dim3(MV_BLOCK, 1, 1)
         grid = dim3(num_blocks, 1, 1)
 
-        call dscal_kernel<<<grid, tblock>>>(n, alpha, x)
+        x_d = x
+        call dscal_kernel<<<grid, tblock>>>(n, alpha, x_d)
         istat = cudaDeviceSynchronize()
+        x = x_d
     end subroutine gpu_dscal
 
     !> Euclidean norm: ||x||_2 = sqrt(sum(x_i^2))

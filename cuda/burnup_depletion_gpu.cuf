@@ -93,7 +93,7 @@ contains
 
         integer :: i, j, k, sub
         real(wp) :: phi, sf, sub_dt
-        real(wp) :: xe, i135, sm, pm, u5, u8, pu9, pu1
+        real(wp) :: xe, i135_l, sm, pm, u5, u8, pu9, pu1
         real(wp) :: sf_phi, absorption_xe, absorption_sm
         real(wp) :: dxe, di135, dsm, dpm, du5, du8, dpu9, dpu1
 
@@ -106,7 +106,7 @@ contains
         phi = phi_thermal(i,j,k)
         sf = sigma_f(i,j,k)
 
-        xe = Xe135(i,j,k);  i135 = I135(i,j,k)
+        xe = Xe135(i,j,k);  i135_l = I135(i,j,k)
         sm = Sm149(i,j,k);  pm = Pm149(i,j,k)
         u5 = U235(i,j,k);   u8 = U238(i,j,k)
         pu9 = Pu239(i,j,k); pu1 = Pu241(i,j,k)
@@ -117,12 +117,12 @@ contains
             sf_phi = sf * phi
 
             ! I-135: production from fission, decay
-            di135 = GAMMA_I135 * sf_phi - LAMBDA_I135 * i135
+            di135 = GAMMA_I135 * sf_phi - LAMBDA_I135 * i135_l
 
             ! Xe-135: production from I-135 decay + direct fission yield,
             !         loss by decay + absorption
             absorption_xe = sigma_a_Xe(i,j,k) * phi
-            dxe = GAMMA_XE135 * sf_phi + LAMBDA_I135 * i135 - &
+            dxe = GAMMA_XE135 * sf_phi + LAMBDA_I135 * i135_l - &
                   (LAMBDA_XE135 + absorption_xe) * xe
 
             ! Pm-149: production from fission, decay
@@ -146,7 +146,7 @@ contains
             dpu1 = -sigma_a_Pu241(i,j,k) * phi * pu1
 
             ! Explicit Euler update
-            i135 = i135 + sub_dt * di135
+            i135_l = i135_l + sub_dt * di135
             xe = xe + sub_dt * dxe
             pm = pm + sub_dt * dpm
             sm = sm + sub_dt * dsm
@@ -156,14 +156,14 @@ contains
             pu1 = max(0.0_wp, pu1 + sub_dt * dpu1)
 
             ! Prevent negative concentrations
-            i135 = max(0.0_wp, i135)
+            i135_l = max(0.0_wp, i135_l)
             xe = max(0.0_wp, xe)
             pm = max(0.0_wp, pm)
             sm = max(0.0_wp, sm)
         end do
 
         ! Write back
-        Xe135(i,j,k) = xe;  I135(i,j,k) = i135
+        Xe135(i,j,k) = xe;  I135(i,j,k) = i135_l
         Sm149(i,j,k) = sm;  Pm149(i,j,k) = pm
         U235(i,j,k) = u5;   U238(i,j,k) = u8
         Pu239(i,j,k) = pu9; Pu241(i,j,k) = pu1
@@ -237,14 +237,16 @@ contains
         real(wp), intent(in) :: flux(g%nx,g%ny,g%nz), power(g%nx,g%ny,g%nz)
         real(wp), intent(in) :: dt
         integer, intent(in) :: n_substeps
+        real(wp), allocatable, device :: flux_d(:,:,:), power_d(:,:,:)
         type(dim3) :: grid, tblock
         integer :: istat
 
+        flux_d = flux;  power_d = power
         tblock = dim3(8, 8, 4)
         grid = dim3((g%nx + 7) / 8, (g%ny + 7) / 8, (g%nz + 3) / 4)
 
         call burnup_step_kernel<<<grid, tblock>>>( &
-            g%nx, g%ny, g%nz, dt, n_substeps, flux, power, &
+            g%nx, g%ny, g%nz, dt, n_substeps, flux_d, power_d, &
             g%Xe135, g%I135, g%Sm149, g%Pm149, g%U235, g%U238, g%Pu239, g%Pu241, &
             g%sigma_f, g%sigma_a_Xe, g%sigma_a_Sm, g%sigma_a_U235, &
             g%sigma_a_U238, g%sigma_a_Pu239, g%sigma_a_Pu241, g%burnup)
