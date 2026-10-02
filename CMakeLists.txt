@@ -95,12 +95,17 @@ elseif(CMAKE_Fortran_COMPILER_ID MATCHES "PGI|NVHPC")
     # nvfortran-specific flags.
     #   -cuda     enables CUDA Fortran syntax (.cuf kernels, cudafor module)
     #   -Mbackslash  keeps backslash as a literal char (matches gfortran)
-    #   -Mcpp     enables preprocessing so #ifdef works in .f90 files
+    #   -Mpreprocess  enables preprocessing so #ifdef works in .f90 files
     #   -Mstandard  enables Fortran standard-conformance checking
     # NOTE: nvfortran does NOT understand -std=f2008 (that's gfortran syntax).
     #       nvfortran accepts F2008 features by default; use -Mstandard to
     #       warn on non-standard extensions, or omit it for permissive mode.
-    set(CMAKE_Fortran_FLAGS "${CMAKE_Fortran_FLAGS} -cuda -Mbackslash -Mcpp")
+    # -Mcpp is preprocess only and emits no object
+    set(CMAKE_Fortran_FLAGS "${CMAKE_Fortran_FLAGS} -Mbackslash -Mpreprocess")
+    # cuda only where kernels are built
+    if(COMPUTATION_MODE STREQUAL "GPU" OR COMPUTATION_MODE STREQUAL "HYBRID")
+        set(CMAKE_Fortran_FLAGS "${CMAKE_Fortran_FLAGS} -cuda")
+    endif()
     set(CMAKE_Fortran_FLAGS_RELEASE "-O3 -fast")
     set(CMAKE_Fortran_FLAGS_DEBUG "-O0 -g -C -traceback -Kcheck")
 elseif(CMAKE_Fortran_COMPILER_ID MATCHES "Intel")

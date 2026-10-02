@@ -13,7 +13,13 @@
 
 # Skip the test build entirely in GPU/HYBRID mode.
 if(DEFINED COMPUTATION_MODE AND NOT COMPUTATION_MODE STREQUAL "CPU")
-    message(STATUS "Test suite skipped in COMPUTATION_MODE=${COMPUTATION_MODE} (requires gfortran)")
+    message(STATUS "Test suite skipped in COMPUTATION_MODE=${COMPUTATION_MODE}")
+    return()
+endif()
+# these flags are gfortran only
+if(NOT CMAKE_Fortran_COMPILER_ID MATCHES "GNU")
+    message(STATUS "Test suite skipped: needs gfortran for the sanitizer/bounds-check "
+                   "flags below (compiler is ${CMAKE_Fortran_COMPILER_ID})")
     return()
 endif()
 
@@ -34,7 +40,8 @@ endif()
 
 # Set Fortran standard. These flags are gfortran-specific (sanitizers,
 # bounds checking) and only valid in CPU mode.
-set(CMAKE_Fortran_FLAGS "-g3 -O0 -fcheck=all -fbacktrace -Wall -Wextra -fsanitize=address -fno-omit-frame-pointer -fno-inline -fno-lto -fsanitize=address,undefined -fstack-protector-strong")
+# -cpp needed for the #if guards in test_suite.f90
+set(CMAKE_Fortran_FLAGS "-cpp -g3 -O0 -fcheck=all -fbacktrace -Wall -Wextra -fsanitize=address -fno-omit-frame-pointer -fno-inline -fno-lto -fsanitize=address,undefined -fstack-protector-strong")
 
 # Reuse the parent project's module directory for *reading* .mod files
 # produced by the main library, but write test-built .mod files into a
